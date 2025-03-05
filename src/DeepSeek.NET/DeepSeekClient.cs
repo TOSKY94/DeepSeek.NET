@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -47,7 +48,7 @@ namespace DeepSeek.NET
         /// </summary>
         /// <param name="request">Chat request parameters</param>
         /// <returns>Service response with chat completion result</returns>
-        public async Task<ServiceResponse<ChatResponse>> ChatAsync(ChatRequest request)
+        public async Task<ServiceResponse<ChatResponse>> ChatAsync(ChatRequest request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var validationError = ValidateModelVersion(request.Model);
             if (validationError != null)
@@ -64,7 +65,7 @@ namespace DeepSeek.NET
             {
                 using var content = new StringContent(JsonSerializer.Serialize(request, _jsonOptions), Encoding.UTF8,"application/json");
 
-                using var response = await _httpClient.PostAsync("chat/completions", content);
+                using var response = await _httpClient.PostAsync("chat/completions", content, cancellationToken);
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -100,7 +101,7 @@ namespace DeepSeek.NET
         /// Streams chat responses from the API in real-time
         /// </summary>
         /// <param name="request">Chat request parameters (must have Stream = true)</param>
-        public async IAsyncEnumerable<ServiceResponse<ChatResponse>> ChatStreamAsync(ChatRequest request)
+        public async IAsyncEnumerable<ServiceResponse<ChatResponse>> ChatStreamAsync(ChatRequest request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             if (!request.Stream)
             {
@@ -109,7 +110,7 @@ namespace DeepSeek.NET
 
             using var content = new StringContent(JsonSerializer.Serialize(request, _jsonOptions), Encoding.UTF8, "application/json");
 
-            using var response = await _httpClient.PostAsync("chat/completions", content);
+            using var response = await _httpClient.PostAsync("chat/completions", content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -127,29 +128,41 @@ namespace DeepSeek.NET
                 var line = await reader.ReadLineAsync();
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
-                ServiceResponse<ChatResponse>? chunkResponse = null;
-                try
+                if (line.StartsWith("data: "))
                 {
-                    var chunk = JsonSerializer.Deserialize<ChatResponse>(line, _jsonOptions);
-                    chunkResponse = new ServiceResponse<ChatResponse>
-                    {
-                        IsSuccess = true,
-                        Data = chunk!,
-                        StatusCode = (int)response.StatusCode
-                    };
-                }
-                catch (JsonException)
-                {
-                    chunkResponse = HandleErrorResponse(
-                        new ErrorResponse { Message = "Error parsing streaming response" },
-                        response.StatusCode);
-                }
+                    var jsonContent = line.Substring(6).Trim();
+                    if (jsonContent == "[DONE]") break;
 
-                if (chunkResponse != null)
-                {
-                    yield return chunkResponse;
+                    ServiceResponse<ChatResponse>? chunkResponse = null;
+                    try
+                    {
+                        var chunk = JsonSerializer.Deserialize<ChatResponse>(jsonContent, _jsonOptions);
+
+                        chunkResponse = new ServiceResponse<ChatResponse>
+                        {
+                            IsSuccess = true,
+                            Data = chunk!,
+                            StatusCode = (int)response.StatusCode
+                        };
+                    }
+                    catch (JsonException ex)
+                    {
+                        chunkResponse = HandleErrorResponse(
+                            new ErrorResponse
+                            {
+                                Message = $"JSON parse error: {ex.Message}",
+                                Code = "JSON_PARSE_ERROR"
+                            },
+                            response.StatusCode);
+                    }
+
+                    if (chunkResponse != null)
+                    {
+                        yield return chunkResponse;
+                    }
                 }
             }
+        
         }
         private ErrorResponse? ValidateModelVersion(string model)
         {

@@ -39,6 +39,12 @@ namespace DeepSeek.NET.Models
         public Message? Message { get; set; }
 
         /// <summary>
+        /// Incremental content updates
+        /// </summary>
+        [JsonPropertyName("delta")]
+        public Message? Delta { get; set; }
+
+        /// <summary>
         /// Reason for completion termination
         /// </summary>
         [JsonPropertyName("finish_reason")]

@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/DeepSeek.svg)](https://www.nuget.org/packages/DeepSeek/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Official .NET client library for interacting with DeepSeek's AI APIs, supporting both synchronous and streaming chat completions.
+.NET client library for interacting with DeepSeek's AI APIs, supporting both synchronous and streaming chat completions.
 
 ## Table of Contents
 - [Installation](#installation)

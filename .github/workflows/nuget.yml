@@ -4,8 +4,10 @@
 name: Publish to NuGet
 
 on:
-    release:
-        types: [published]
+    workflow_dispatch:
+    push:
+        tags:
+            - 'v*'
 
 jobs:
     publish:

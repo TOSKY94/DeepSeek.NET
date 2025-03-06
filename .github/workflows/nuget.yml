@@ -26,7 +26,7 @@ jobs:
               run: dotnet build --configuration Release ./src/DeepSeek.NET/DeepSeek.NET.csproj
 
             - name: Pack
-              run: dotnet pack --configuration Release ./src/DeepSeek.NET/DeepSeek.NET.csproj -p:PackageVersion=${{ github.ref_name }} --output ./nupkg
+              run: dotnet pack --configuration Release ./src/DeepSeek.NET/DeepSeek.NET.csproj --output ./nupkg
 
             - name: Publish to NuGet
               run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

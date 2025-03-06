@@ -1,9 +1,9 @@
 # DeepSeek .NET Client
 
-[![NuGet](https://img.shields.io/nuget/v/DeepSeek.svg)](https://www.nuget.org/packages/DeepSeek/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![NuGet](https://img.shields.io/nuget/v/DeepSeek.svg)](https://www.nuget.org/packages/DeepSeek.NET.SDK)
 
-.NET client library for interacting with DeepSeek's AI APIs, supporting both synchronous and streaming chat completions.
+[DeepSeek](https://www.deepseek.com) .NET SDK client library. Supports both synchronous and streaming chat completions. 
+> **Note:** Please ensure you have your api key or go to [official website](https://platform.deepseek.com/), to register and apply for DeepSeek's ApiKey to be able to use this library.
 
 ## Table of Contents
 - [Installation](#installation)
@@ -14,13 +14,13 @@
 - [Configuration](#configuration)
 - [Advanced Usage](#advanced-usage)
 - [Common Issues](#common-issues)
-- [License](#license)
 - [Contributing](#contributing)
+
 
 ## Installation
 
 ```bash
-dotnet add package DeepSeek.NET
+dotnet add package DeepSeek.NET.SDK
 ```
 
 ## Getting Started
@@ -45,6 +45,9 @@ if (response.IsSuccess)
     Console.WriteLine(response.Data?.Choices[0].Message?.Content);
 }
 ```
+
+> [!TIP]
+> [usage example](https://github.com/TOSKY94/DeepSeek.NET/tree/main/sample/Sample)
 
 ## Features
 
@@ -209,9 +212,6 @@ var client = new DeepSeekClient(apiKey)
 };
 ```
 
-## License
-MIT License - See [LICENSE](LICENSE) for details.
-
 ## Contributing
 1. Fork the repository
 2. Create feature branch
@@ -219,4 +219,4 @@ MIT License - See [LICENSE](LICENSE) for details.
 4. Follow coding conventions
 
 **Repository**: [github.com/TOSKY94/DeepSeek.NET](https://github.com/TOSKY94/DeepSeek.NET)  
-**NuGet**: [nuget.org/packages/DeepSeek](https://www.nuget.org/packages/DeepSeek)
+**NuGet**: [nuget.org/packages/DeepSeek.NET.SDK](https://www.nuget.org/packages/DeepSeek.NET.SDK)

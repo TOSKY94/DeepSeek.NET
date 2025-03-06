@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <PackageId>DeepSeek.NET</PackageId>
+    <PackageId>DeepSeek.NET.SDK</PackageId>
     <Version>1.0.0</Version>
     <Authors>Patrick</Authors>
     <Description>.NET client library for interacting with DeepSeek's AI APIs, supporting both synchronous and streaming chat completions.</Description>
@@ -13,6 +13,12 @@
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
+    <ItemGroup>
+        <None Include="..\..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 </Project>
